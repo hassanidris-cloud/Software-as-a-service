@@ -21,7 +21,8 @@
 ├── docs/
 │   └── FOLDER_STRUCTURE.md
 ├── lib/
-│   └── (shared utilities, services, helpers)
+│   └── supabase/
+│       └── client.ts
 ├── public/
 │   └── (images, logos, static assets)
 ├── supabase/
