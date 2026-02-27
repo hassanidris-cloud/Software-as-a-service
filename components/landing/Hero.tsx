@@ -75,7 +75,35 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <CustomerLoyaltyCard3D />
+        <div className="relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.16, ease: "easeOut" }}
+            className="glow-orb absolute -left-6 top-6 h-24 w-24 rounded-full bg-indigo-500/30 blur-2xl"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.22, ease: "easeOut" }}
+            className="glow-orb absolute -right-5 bottom-10 h-28 w-28 rounded-full bg-violet-500/30 blur-2xl"
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 24, rotate: -8 }}
+            animate={{ opacity: 1, y: 0, rotate: -5 }}
+            transition={{ duration: 0.65, delay: 0.12, ease: "easeOut" }}
+            className="depth-outline absolute inset-x-10 top-10 -z-10 h-[76%] rounded-3xl bg-indigo-900/20 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 24, rotate: 8 }}
+            animate={{ opacity: 1, y: 0, rotate: 4 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+            className="depth-outline absolute inset-x-8 bottom-7 -z-10 h-[76%] rounded-3xl bg-violet-900/15 backdrop-blur-sm"
+          />
+
+          <CustomerLoyaltyCard3D />
+        </div>
       </div>
     </section>
   );

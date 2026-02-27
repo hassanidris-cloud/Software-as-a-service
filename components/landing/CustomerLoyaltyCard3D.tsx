@@ -11,9 +11,12 @@ export function CustomerLoyaltyCard3D() {
   const [stampsEarned, setStampsEarned] = useState(3);
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);
+  const glowX = useMotionValue(50);
+  const glowY = useMotionValue(50);
   const springX = useSpring(rotateX, { stiffness: 220, damping: 24, mass: 0.85 });
   const springY = useSpring(rotateY, { stiffness: 220, damping: 24, mass: 0.85 });
   const transform = useMotionTemplate`perspective(1300px) rotateX(${springX}deg) rotateY(${springY}deg)`;
+  const spotlight = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, rgba(196,181,253,0.28), rgba(196,181,253,0) 46%)`;
 
   const stampSlots = useMemo(() => Array.from({ length: MAX_STAMPS }), []);
 
@@ -25,6 +28,8 @@ export function CustomerLoyaltyCard3D() {
     const midY = rect.height / 2;
     rotateY.set(((x - midX) / midX) * 9);
     rotateX.set(-((y - midY) / midY) * 8);
+    glowX.set((x / rect.width) * 100);
+    glowY.set((y / rect.height) * 100);
   }
 
   function handleTouchMove(event: TouchEvent<HTMLElement>) {
@@ -40,11 +45,15 @@ export function CustomerLoyaltyCard3D() {
     const midY = rect.height / 2;
     rotateY.set(((x - midX) / midX) * 8.5);
     rotateX.set(-((y - midY) / midY) * 7.5);
+    glowX.set((x / rect.width) * 100);
+    glowY.set((y / rect.height) * 100);
   }
 
   function resetTilt() {
     rotateX.set(0);
     rotateY.set(0);
+    glowX.set(50);
+    glowY.set(50);
   }
 
   function triggerStampCelebration() {
@@ -75,6 +84,7 @@ export function CustomerLoyaltyCard3D() {
     <motion.section
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
       viewport={{ once: true, amount: 0.35 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="glass-panel rounded-3xl p-5"
@@ -87,8 +97,10 @@ export function CustomerLoyaltyCard3D() {
         onTouchEnd={resetTilt}
         className="group relative overflow-hidden rounded-[1.75rem] border border-indigo-300/35 bg-[#070b16]/85 p-5"
       >
+        <motion.div className="pointer-events-none absolute inset-0" style={{ background: spotlight }} />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.35),transparent_40%),radial-gradient(circle_at_85%_75%,rgba(168,85,247,0.35),transparent_42%)]" />
-        <div className="pointer-events-none absolute -inset-px rounded-[1.75rem] border border-indigo-200/20 shadow-[0_0_30px_rgba(99,102,241,0.35)]" />
+        <div className="pointer-events-none absolute -inset-px rounded-[1.75rem] border border-indigo-200/20 shadow-[0_0_36px_rgba(99,102,241,0.35)]" />
+        <div className="pointer-events-none absolute inset-x-4 top-0 h-16 rounded-b-[40px] bg-white/10 blur-xl" />
 
         <div style={{ transform: "translateZ(36px)" }} className="relative flex items-start justify-between">
           <div>
@@ -104,8 +116,14 @@ export function CustomerLoyaltyCard3D() {
           {stampSlots.map((_, index) => {
             const active = index < stampsEarned;
             return (
-              <div
+              <motion.div
                 key={`stamp-${index}`}
+                initial={false}
+                animate={{
+                  scale: active ? [1, 1.09, 1] : 1,
+                  opacity: active ? 1 : 0.8
+                }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
                 className={`h-12 rounded-xl border ${
                   active
                     ? "border-violet-300/70 bg-violet-400/25 shadow-[0_0_22px_rgba(168,85,247,0.45)]"

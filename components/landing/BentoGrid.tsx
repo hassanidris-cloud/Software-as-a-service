@@ -53,10 +53,12 @@ export function BentoGrid() {
               key={title}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -6, scale: 1.01 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.45, delay: index * 0.06, ease: "easeOut" }}
-              className={`glass-panel rounded-2xl p-5 ${className}`}
+              className={`glass-panel relative overflow-hidden rounded-2xl p-5 ${className}`}
             >
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white/8 to-transparent" />
               <Icon className="mb-4 text-indigo-200" size={19} />
               <h3 className="mb-2 text-lg font-medium text-white">{title}</h3>
               <p className="text-sm leading-relaxed text-slate-300">{description}</p>
