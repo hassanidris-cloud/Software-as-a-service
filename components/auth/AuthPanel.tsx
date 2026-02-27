@@ -46,7 +46,9 @@ export function AuthPanel({ errorMessage = "", nextPath }: AuthPanelProps) {
       throw new Error(profileError.message);
     }
 
-    if (profile?.role === "admin") {
+    const resolvedRole = (profile as { role?: UserRole } | null)?.role;
+
+    if (resolvedRole === "admin") {
       router.push(nextPath);
     } else {
       router.push("/");

@@ -20,7 +20,7 @@ export default async function ProductsPage() {
   }
 
   const supabase = await createServerSupabaseClient();
-  const { data: products, error } = await supabase
+  const { data: productRows, error } = await supabase
     .from("products")
     .select("id, name, price, is_active")
     .eq("business_id", business.id)
@@ -29,6 +29,13 @@ export default async function ProductsPage() {
   if (error) {
     throw new Error(`Unable to load products: ${error.message}`);
   }
+
+  const products = (productRows ?? []) as Array<{
+    id: string;
+    name: string;
+    price: number;
+    is_active: boolean;
+  }>;
 
   return (
     <section className="space-y-6">

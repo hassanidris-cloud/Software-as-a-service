@@ -124,7 +124,11 @@ export function QrScannerPanel({ businessId }: QrScannerPanelProps) {
         .stop()
         .catch(() => undefined)
         .finally(() => {
-          void scanner.clear().catch(() => undefined);
+          try {
+            scanner.clear();
+          } catch {
+            // Ignore cleanup errors on unmount.
+          }
         });
     };
   }, []);
