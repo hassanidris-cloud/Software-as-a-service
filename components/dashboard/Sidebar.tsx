@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Package, QrCode } from "lucide-react";
+import { SignOutButton } from "@/components/auth/SignOutButton";
 
 type NavItem = {
   href: string;
@@ -22,7 +23,12 @@ function getActiveStyles(active: boolean) {
     : "border-transparent text-slate-300 hover:border-slate-700 hover:bg-slate-900 hover:text-white";
 }
 
-export function DashboardSidebar() {
+type DashboardSidebarProps = {
+  fullName: string;
+  businessName: string | null;
+};
+
+export function DashboardSidebar({ fullName, businessName }: DashboardSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -30,6 +36,8 @@ export function DashboardSidebar() {
       <div className="border-b border-slate-800 px-5 py-4">
         <p className="text-sm text-slate-400">LoyaltyHub</p>
         <h1 className="text-lg font-semibold text-white">Business Dashboard</h1>
+        <p className="mt-2 text-xs text-slate-400">{fullName}</p>
+        {businessName && <p className="text-xs text-indigo-200">{businessName}</p>}
       </div>
 
       <nav className="grid grid-cols-1 gap-2 px-3 py-4 sm:grid-cols-3 md:grid-cols-1">
@@ -49,6 +57,10 @@ export function DashboardSidebar() {
           );
         })}
       </nav>
+
+      <div className="border-t border-slate-800 px-3 py-4">
+        <SignOutButton />
+      </div>
     </aside>
   );
 }

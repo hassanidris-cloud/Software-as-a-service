@@ -3,6 +3,8 @@
 ```text
 .
 ├── app/
+│   ├── auth/
+│   │   └── page.tsx
 │   ├── dashboard/
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
@@ -14,21 +16,37 @@
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components/
+│   ├── auth/
+│   │   ├── AuthPanel.tsx
+│   │   └── SignOutButton.tsx
 │   ├── dashboard/
+│   │   ├── AddProductForm.tsx
+│   │   ├── CreateBusinessForm.tsx
+│   │   ├── QrScannerPanel.tsx
 │   │   └── Sidebar.tsx
 │   └── landing/
 │       └── Hero.tsx
 ├── docs/
 │   └── FOLDER_STRUCTURE.md
 ├── lib/
-│   └── supabase/
-│       └── client.ts
+│   ├── auth/
+│   │   └── require-admin.ts
+│   ├── supabase/
+│   │   ├── browser.ts
+│   │   ├── client.ts
+│   │   ├── env.ts
+│   │   ├── middleware.ts
+│   │   ├── server.ts
+│   │   └── types.ts
+│   └── utils/
+│       └── slugify.ts
 ├── public/
 │   └── (images, logos, static assets)
 ├── supabase/
 │   └── schema.sql
 ├── .gitignore
 ├── eslint.config.mjs
+├── middleware.ts
 ├── next.config.ts
 ├── package.json
 ├── postcss.config.mjs

@@ -8,6 +8,7 @@ LoyaltyHub is a SaaS MVP where businesses can showcase products and run a QR-bas
 - Tailwind CSS
 - Lucide React icons
 - Supabase (Auth + Postgres)
+- html5-qrcode (scanner)
 
 ## 1) Standard Next.js Folder Structure
 
@@ -22,6 +23,9 @@ The complete SQL schema is in [`supabase/schema.sql`](./supabase/schema.sql) and
 - `products`
 - `loyalty_cards`
 - timestamps, indexes, RLS policies, and update triggers
+- auto profile creation trigger on `auth.users`
+- `increment_loyalty_points` RPC for atomic scanner updates
+- Supabase Storage bucket/policies for `product-images`
 
 ## 3) Landing Page Hero Section
 
@@ -52,6 +56,38 @@ Sidebar items:
 - My Products
 - Scan QR Code
 
+## 5) Auth, Roles, and Protected Routes
+
+- Auth page: [`app/auth/page.tsx`](./app/auth/page.tsx)
+- Auth UI: [`components/auth/AuthPanel.tsx`](./components/auth/AuthPanel.tsx)
+- Middleware protection: [`middleware.ts`](./middleware.ts)
+- Server-side admin guard: [`lib/auth/require-admin.ts`](./lib/auth/require-admin.ts)
+
+Rules implemented:
+
+- `/dashboard/*` requires an authenticated user
+- dashboard layout additionally enforces `profile.role = 'admin'`
+- role (`admin`/`customer`) is saved at sign-up via Supabase user metadata
+
+## 6) Product Form + Image Upload
+
+- Product page: [`app/dashboard/products/page.tsx`](./app/dashboard/products/page.tsx)
+- Form component: [`components/dashboard/AddProductForm.tsx`](./components/dashboard/AddProductForm.tsx)
+
+Flow:
+
+1. Upload image to Supabase Storage bucket `product-images` under `<business_id>/...`
+2. Insert product row with `image_url` in `products`
+
+## 7) QR Scanner + Loyalty Points
+
+- Scanner page: [`app/dashboard/scan/page.tsx`](./app/dashboard/scan/page.tsx)
+- Scanner component: [`components/dashboard/QrScannerPanel.tsx`](./components/dashboard/QrScannerPanel.tsx)
+
+The scanner reads a UUID token and calls the RPC:
+
+- `increment_loyalty_points(p_business_id, p_qr_token, p_points_to_add)`
+
 ## Local Setup
 
 1. Install dependencies:
@@ -66,10 +102,18 @@ Sidebar items:
    cp .env.example .env.local
    ```
 
-3. Run development server:
+3. Apply schema in Supabase SQL editor:
+
+   - Run [`supabase/schema.sql`](./supabase/schema.sql)
+
+4. Run development server:
 
    ```bash
    npm run dev
    ```
 
-4. Open <http://localhost:3000>.
+5. Open:
+
+- Landing: <http://localhost:3000>
+- Auth: <http://localhost:3000/auth>
+- Dashboard: <http://localhost:3000/dashboard>

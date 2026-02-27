@@ -1,15 +1,58 @@
-const overviewStats = [
-  { label: "Total Customers", value: "1,248" },
-  { label: "Scans This Month", value: "438" },
-  { label: "Rewards Redeemed", value: "91" }
-];
+import { CreateBusinessForm } from "@/components/dashboard/CreateBusinessForm";
+import { getPrimaryBusiness, requireAdminContext } from "@/lib/auth/require-admin";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-export default function DashboardOverviewPage() {
+function monthStartIso() {
+  const date = new Date();
+  date.setUTCDate(1);
+  date.setUTCHours(0, 0, 0, 0);
+  return date.toISOString();
+}
+
+export default async function DashboardOverviewPage() {
+  const { user } = await requireAdminContext();
+  const business = await getPrimaryBusiness(user.id);
+
+  if (!business) {
+    return (
+      <section className="space-y-6">
+        <header>
+          <p className="text-sm uppercase tracking-wide text-indigo-300">Overview</p>
+          <h2 className="text-2xl font-semibold text-white sm:text-3xl">Welcome to your dashboard</h2>
+        </header>
+
+        <CreateBusinessForm ownerId={user.id} />
+      </section>
+    );
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const [customerCardsResult, productsResult, monthlyScansResult] = await Promise.all([
+    supabase.from("loyalty_cards").select("*", { head: true, count: "exact" }).eq("business_id", business.id),
+    supabase
+      .from("products")
+      .select("*", { head: true, count: "exact" })
+      .eq("business_id", business.id)
+      .eq("is_active", true),
+    supabase
+      .from("loyalty_cards")
+      .select("*", { head: true, count: "exact" })
+      .eq("business_id", business.id)
+      .gte("last_scanned_at", monthStartIso())
+  ]);
+
+  const overviewStats = [
+    { label: "Total Customers", value: String(customerCardsResult.count ?? 0) },
+    { label: "Scanned This Month", value: String(monthlyScansResult.count ?? 0) },
+    { label: "Active Products", value: String(productsResult.count ?? 0) }
+  ];
+
   return (
     <section className="space-y-6">
       <header>
         <p className="text-sm uppercase tracking-wide text-indigo-300">Overview</p>
-        <h2 className="text-2xl font-semibold text-white sm:text-3xl">Welcome back, business owner</h2>
+        <h2 className="text-2xl font-semibold text-white sm:text-3xl">{business.name}</h2>
+        <p className="mt-1 text-sm text-slate-400">Manage your profile, products, and loyalty activity.</p>
       </header>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -24,8 +67,8 @@ export default function DashboardOverviewPage() {
       <article className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
         <h3 className="mb-2 text-base font-medium text-white">Quick insight</h3>
         <p className="text-sm text-slate-300">
-          Most customers scan their cards between 4 PM and 7 PM. Consider limited-time rewards during that
-          window to boost repeat purchases.
+          Keep your best-selling products active and visible. Pair product launches with bonus scan campaigns
+          to accelerate repeat visits.
         </p>
       </article>
     </section>

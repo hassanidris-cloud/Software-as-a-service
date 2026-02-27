@@ -89,6 +89,37 @@ before update on public.loyalty_cards
 for each row
 execute function public.set_updated_at();
 
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, full_name, role)
+  values (
+    new.id,
+    new.raw_user_meta_data ->> 'full_name',
+    case
+      when new.raw_user_meta_data ->> 'role' in ('admin', 'customer') then (new.raw_user_meta_data ->> 'role')::text
+      else 'customer'
+    end
+  )
+  on conflict (id) do update
+  set
+    full_name = excluded.full_name,
+    role = excluded.role;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+after insert on auth.users
+for each row
+execute function public.handle_new_user();
+
 alter table public.profiles enable row level security;
 alter table public.businesses enable row level security;
 alter table public.products enable row level security;
@@ -249,5 +280,116 @@ with check (
     from public.businesses b
     where b.id = business_id
       and b.owner_id = auth.uid()
+  )
+);
+
+create or replace function public.increment_loyalty_points(
+  p_business_id uuid,
+  p_qr_token uuid,
+  p_points_to_add integer default 1
+)
+returns public.loyalty_cards
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_card public.loyalty_cards;
+begin
+  if p_points_to_add < 1 then
+    raise exception 'Points to add must be at least 1';
+  end if;
+
+  if not exists (
+    select 1
+    from public.businesses b
+    where b.id = p_business_id
+      and b.owner_id = auth.uid()
+  ) then
+    raise exception 'Not authorized to update cards for this business';
+  end if;
+
+  update public.loyalty_cards
+  set
+    points = points + p_points_to_add,
+    last_scanned_at = timezone('utc', now()),
+    updated_at = timezone('utc', now())
+  where business_id = p_business_id
+    and qr_token = p_qr_token
+  returning * into v_card;
+
+  if v_card.id is null then
+    raise exception 'Loyalty card not found';
+  end if;
+
+  return v_card;
+end;
+$$;
+
+grant execute on function public.increment_loyalty_points(uuid, uuid, integer) to authenticated;
+
+insert into storage.buckets (id, name, public)
+values ('product-images', 'product-images', true)
+on conflict (id) do nothing;
+
+alter table storage.objects enable row level security;
+
+drop policy if exists "product_images_public_read" on storage.objects;
+create policy "product_images_public_read"
+on storage.objects
+for select
+using (bucket_id = 'product-images');
+
+drop policy if exists "product_images_owner_insert" on storage.objects;
+create policy "product_images_owner_insert"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'product-images'
+  and exists (
+    select 1
+    from public.businesses b
+    where b.owner_id = auth.uid()
+      and b.id::text = (storage.foldername(name))[1]
+  )
+);
+
+drop policy if exists "product_images_owner_update" on storage.objects;
+create policy "product_images_owner_update"
+on storage.objects
+for update
+to authenticated
+using (
+  bucket_id = 'product-images'
+  and exists (
+    select 1
+    from public.businesses b
+    where b.owner_id = auth.uid()
+      and b.id::text = (storage.foldername(name))[1]
+  )
+)
+with check (
+  bucket_id = 'product-images'
+  and exists (
+    select 1
+    from public.businesses b
+    where b.owner_id = auth.uid()
+      and b.id::text = (storage.foldername(name))[1]
+  )
+);
+
+drop policy if exists "product_images_owner_delete" on storage.objects;
+create policy "product_images_owner_delete"
+on storage.objects
+for delete
+to authenticated
+using (
+  bucket_id = 'product-images'
+  and exists (
+    select 1
+    from public.businesses b
+    where b.owner_id = auth.uid()
+      and b.id::text = (storage.foldername(name))[1]
   )
 );
