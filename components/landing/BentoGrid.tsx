@@ -96,12 +96,12 @@ export function BentoGrid() {
             className="mb-9 flex flex-wrap items-end justify-between gap-4"
           >
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-indigo-200/80">Bento Overview</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-cyan-200/80">Bento Overview</p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 LoyaltySphere powers modern, motion-first loyalty experiences
               </h2>
             </div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200/25 bg-indigo-300/10 px-4 py-2 text-xs font-medium text-indigo-100">
+            <span className="inline-flex items-center gap-2 rounded-full border border-cyan-200/30 bg-cyan-300/10 px-4 py-2 text-xs font-medium text-cyan-100">
               <Rocket size={14} />
               Tap a card to open a 3D popup
             </span>
@@ -121,13 +121,13 @@ export function BentoGrid() {
                   className={`glass-panel relative overflow-hidden rounded-2xl p-5 ${className}`}
                 >
                   <div className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white/8 to-transparent" />
-                  <Icon className="mb-4 text-indigo-200" size={19} />
+                  <Icon className="mb-4 text-cyan-200" size={19} />
                   <h3 className="mb-2 text-lg font-medium text-white">{title}</h3>
                   <p className="mb-4 text-sm leading-relaxed text-slate-300">{description}</p>
                   <button
                     type="button"
                     onClick={() => setActiveFeature(feature)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-indigo-300/30 bg-indigo-400/10 px-3 py-1.5 text-xs font-medium text-indigo-100 transition hover:bg-indigo-400/20"
+                    className="inline-flex items-center gap-1 rounded-lg border border-cyan-300/35 bg-cyan-400/10 px-3 py-1.5 text-xs font-medium text-cyan-100 transition hover:bg-cyan-400/20"
                   >
                     Open 3D popup
                     <ArrowUpRight size={14} />
@@ -163,9 +163,9 @@ export function BentoGrid() {
               transition={{ type: "spring", stiffness: 210, damping: 24 }}
               className="relative w-full max-w-3xl [perspective:1500px]"
             >
-              <div className="absolute inset-0 -z-10 rounded-3xl bg-indigo-500/20 blur-3xl" />
-              <div className="absolute -left-5 top-5 -z-10 h-[82%] w-full rounded-3xl border border-indigo-200/20 bg-indigo-900/20" />
-              <div className="absolute -right-5 bottom-5 -z-10 h-[82%] w-full rounded-3xl border border-violet-200/20 bg-violet-900/20" />
+              <div className="absolute inset-0 -z-10 rounded-3xl bg-cyan-500/20 blur-3xl" />
+              <div className="absolute -left-5 top-5 -z-10 h-[82%] w-full rounded-3xl border border-cyan-200/20 bg-cyan-900/20" />
+              <div className="absolute -right-5 bottom-5 -z-10 h-[82%] w-full rounded-3xl border border-fuchsia-200/20 bg-fuchsia-900/20" />
 
               <article className="glass-panel relative overflow-hidden rounded-3xl p-6 sm:p-7">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-18 bg-gradient-to-b from-white/10 to-transparent" />
@@ -179,11 +179,11 @@ export function BentoGrid() {
 
                 <div className="relative">
                   <div className="mb-5 flex items-center gap-3">
-                    <span className="rounded-xl border border-indigo-300/30 bg-indigo-400/10 p-2 text-indigo-100">
+                    <span className="rounded-xl border border-cyan-300/30 bg-cyan-400/10 p-2 text-cyan-100">
                       <activeFeature.icon size={18} />
                     </span>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-indigo-200/80">Interactive Popup</p>
+                      <p className="text-xs uppercase tracking-[0.2em] text-cyan-200/80">Interactive Popup</p>
                       <h3 className="text-2xl font-semibold text-white sm:text-3xl">{activeFeature.title}</h3>
                     </div>
                   </div>
@@ -193,13 +193,13 @@ export function BentoGrid() {
                   <div className="grid gap-5 md:grid-cols-[1.2fr_0.8fr]">
                     <ul className="space-y-2.5">
                       {activeFeature.bullets.map((bullet) => (
-                        <li key={bullet} className="rounded-lg border border-slate-700/70 bg-slate-900/55 px-3 py-2 text-sm text-slate-200">
+                        <li key={bullet} className="rounded-lg border border-cyan-900/40 bg-slate-900/55 px-3 py-2 text-sm text-slate-200">
                           {bullet}
                         </li>
                       ))}
                     </ul>
-                    <div className="rounded-2xl border border-indigo-300/25 bg-indigo-400/10 p-4">
-                      <p className="text-xs uppercase tracking-[0.16em] text-indigo-200/80">{activeFeature.metricLabel}</p>
+                    <div className="rounded-2xl border border-cyan-300/25 bg-cyan-400/10 p-4">
+                      <p className="text-xs uppercase tracking-[0.16em] text-cyan-200/80">{activeFeature.metricLabel}</p>
                       <p className="mt-3 text-4xl font-semibold tracking-tight text-white">{activeFeature.metricValue}</p>
                       <p className="mt-2 text-sm text-slate-300">Measured from early partner store rollouts.</p>
                     </div>

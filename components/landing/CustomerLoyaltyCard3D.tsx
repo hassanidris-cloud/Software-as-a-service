@@ -16,7 +16,7 @@ export function CustomerLoyaltyCard3D() {
   const springX = useSpring(rotateX, { stiffness: 220, damping: 24, mass: 0.85 });
   const springY = useSpring(rotateY, { stiffness: 220, damping: 24, mass: 0.85 });
   const transform = useMotionTemplate`perspective(1300px) rotateX(${springX}deg) rotateY(${springY}deg)`;
-  const spotlight = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, rgba(196,181,253,0.28), rgba(196,181,253,0) 46%)`;
+  const spotlight = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, rgba(34,211,238,0.28), rgba(34,211,238,0) 46%)`;
 
   const stampSlots = useMemo(() => Array.from({ length: MAX_STAMPS }), []);
 
@@ -67,7 +67,7 @@ export function CustomerLoyaltyCard3D() {
       startVelocity: 38,
       gravity: 0.95,
       origin: { y: 0.62 },
-      colors: ["#6366f1", "#8b5cf6", "#a78bfa", "#f5d0fe"]
+      colors: ["#22d3ee", "#06b6d4", "#d946ef", "#a3e635"]
     });
   }
 
@@ -95,19 +95,19 @@ export function CustomerLoyaltyCard3D() {
         onMouseLeave={resetTilt}
         onTouchMove={handleTouchMove}
         onTouchEnd={resetTilt}
-        className="group relative overflow-hidden rounded-[1.75rem] border border-indigo-300/35 bg-[#070b16]/85 p-5"
+        className="group relative overflow-hidden rounded-[1.75rem] border border-cyan-300/35 bg-[#060b14]/85 p-5"
       >
         <motion.div className="pointer-events-none absolute inset-0" style={{ background: spotlight }} />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.35),transparent_40%),radial-gradient(circle_at_85%_75%,rgba(168,85,247,0.35),transparent_42%)]" />
-        <div className="pointer-events-none absolute -inset-px rounded-[1.75rem] border border-indigo-200/20 shadow-[0_0_36px_rgba(99,102,241,0.35)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(6,182,212,0.35),transparent_40%),radial-gradient(circle_at_85%_75%,rgba(217,70,239,0.35),transparent_42%)]" />
+        <div className="pointer-events-none absolute -inset-px rounded-[1.75rem] border border-cyan-200/25 shadow-[0_0_36px_rgba(6,182,212,0.35)]" />
         <div className="pointer-events-none absolute inset-x-4 top-0 h-16 rounded-b-[40px] bg-white/10 blur-xl" />
 
         <div style={{ transform: "translateZ(36px)" }} className="relative flex items-start justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-indigo-100/85">LoyaltySphere Card</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/85">LoyaltySphere Card</p>
             <p className="mt-2 text-lg font-semibold text-white">Customer Rewards Wallet</p>
           </div>
-          <span className="rounded-full border border-indigo-200/30 bg-indigo-200/10 px-3 py-1 text-xs text-indigo-100">
+          <span className="rounded-full border border-cyan-200/30 bg-cyan-200/10 px-3 py-1 text-xs text-cyan-100">
             {stampsEarned}/{MAX_STAMPS} stamps
           </span>
         </div>
@@ -126,7 +126,7 @@ export function CustomerLoyaltyCard3D() {
                 transition={{ duration: 0.35, ease: "easeOut" }}
                 className={`h-12 rounded-xl border ${
                   active
-                    ? "border-violet-300/70 bg-violet-400/25 shadow-[0_0_22px_rgba(168,85,247,0.45)]"
+                    ? "border-lime-300/70 bg-fuchsia-400/25 shadow-[0_0_22px_rgba(217,70,239,0.45)]"
                     : "border-slate-600/60 bg-slate-900/65"
                 }`}
               />
@@ -136,7 +136,7 @@ export function CustomerLoyaltyCard3D() {
 
         <div style={{ transform: "translateZ(28px)" }} className="relative mt-5 flex items-center justify-between">
           <p className="text-sm text-slate-300">Neon depth + glassmorphism + haptic feedback.</p>
-          <Sparkles size={17} className="text-violet-200" />
+          <Sparkles size={17} className="text-fuchsia-200" />
         </div>
       </motion.article>
 
@@ -146,7 +146,7 @@ export function CustomerLoyaltyCard3D() {
           type="button"
           onClick={addStamp}
           disabled={stampsEarned >= MAX_STAMPS}
-          className="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-65"
+          className="rounded-xl bg-cyan-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-65"
         >
           {stampsEarned >= MAX_STAMPS ? "Reward Unlocked" : "Add Stamp"}
         </button>

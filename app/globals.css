@@ -6,7 +6,7 @@
 
 body {
   min-height: 100vh;
-  background: #05070d;
+  background: #04060c;
 }
 
 @keyframes meshFloat {
@@ -52,32 +52,32 @@ body {
 
 .mesh-surface::before {
   background:
-    radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.45), transparent 42%),
-    radial-gradient(circle at 85% 15%, rgba(124, 58, 237, 0.3), transparent 40%),
-    radial-gradient(circle at 50% 88%, rgba(15, 23, 42, 0.65), transparent 50%);
+    radial-gradient(circle at 15% 10%, rgba(6, 182, 212, 0.38), transparent 42%),
+    radial-gradient(circle at 85% 15%, rgba(217, 70, 239, 0.3), transparent 40%),
+    radial-gradient(circle at 50% 88%, rgba(8, 13, 24, 0.75), transparent 50%);
 }
 
 .mesh-surface::after {
   background:
-    radial-gradient(circle at 10% 70%, rgba(79, 70, 229, 0.2), transparent 35%),
-    radial-gradient(circle at 90% 72%, rgba(168, 85, 247, 0.2), transparent 42%);
+    radial-gradient(circle at 10% 70%, rgba(34, 211, 238, 0.18), transparent 35%),
+    radial-gradient(circle at 90% 72%, rgba(192, 38, 211, 0.2), transparent 42%);
   animation-delay: -9s;
 }
 
 .glass-panel {
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  background: linear-gradient(150deg, rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.32));
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  background: linear-gradient(150deg, rgba(8, 16, 30, 0.74), rgba(6, 12, 24, 0.48));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 16px 40px rgba(2, 6, 23, 0.5);
+    0 16px 40px rgba(2, 6, 23, 0.58);
   backdrop-filter: blur(18px);
 }
 
 .depth-outline {
-  border: 1px solid rgba(129, 140, 248, 0.4);
+  border: 1px solid rgba(34, 211, 238, 0.42);
   box-shadow:
-    0 0 0 1px rgba(129, 140, 248, 0.25),
-    0 0 36px rgba(129, 140, 248, 0.3);
+    0 0 0 1px rgba(34, 211, 238, 0.25),
+    0 0 36px rgba(34, 211, 238, 0.3);
 }
 
 .glow-orb {

@@ -251,7 +251,7 @@ export function TimedPromoPopup() {
       spread: 65,
       startVelocity: 34,
       origin: { x: 0.88, y: 0.9 },
-      colors: ["#6366f1", "#8b5cf6", "#a78bfa", "#ffffff"]
+      colors: ["#22d3ee", "#06b6d4", "#d946ef", "#a3e635"]
     });
 
     closeWithCooldown(ACTION_COOLDOWN_MS);
@@ -274,10 +274,10 @@ export function TimedPromoPopup() {
             onMouseLeave={resetTilt}
             onTouchMove={handleTouchMove}
             onTouchEnd={resetTilt}
-            className="glass-panel relative overflow-hidden rounded-2xl border border-indigo-300/35 p-4"
+            className="glass-panel relative overflow-hidden rounded-2xl border border-cyan-300/35 p-4"
           >
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(129,140,248,0.35),_transparent_45%),radial-gradient(circle_at_80%_90%,_rgba(168,85,247,0.25),_transparent_45%)]" />
-            <div className="pointer-events-none absolute -inset-px rounded-2xl border border-indigo-200/20 shadow-[0_0_30px_rgba(99,102,241,0.35)]" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.35),_transparent_45%),radial-gradient(circle_at_80%_90%,_rgba(217,70,239,0.25),_transparent_45%)]" />
+            <div className="pointer-events-none absolute -inset-px rounded-2xl border border-cyan-200/20 shadow-[0_0_30px_rgba(6,182,212,0.35)]" />
 
             <button
               type="button"
@@ -290,7 +290,7 @@ export function TimedPromoPopup() {
 
             <div className="relative">
               <div className="mb-3 flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full border border-indigo-300/25 bg-indigo-300/10 px-2.5 py-1 text-[11px] font-medium text-indigo-100">
+                <span className="inline-flex items-center gap-1 rounded-full border border-cyan-300/25 bg-cyan-300/10 px-2.5 py-1 text-[11px] font-medium text-cyan-100">
                   <Sparkles size={12} />
                   {activePromo.badge}
                 </span>
@@ -303,7 +303,7 @@ export function TimedPromoPopup() {
                 <button
                   type="button"
                   onClick={handleClaimOffer}
-                  className="inline-flex items-center gap-2 rounded-lg bg-indigo-500 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-indigo-400"
+                  className="inline-flex items-center gap-2 rounded-lg bg-fuchsia-500 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-fuchsia-400"
                 >
                   <Gift size={15} />
                   {activePromo.ctaLabel}
