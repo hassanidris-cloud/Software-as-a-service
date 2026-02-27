@@ -60,7 +60,7 @@ Sidebar items:
 
 - Auth page: [`app/auth/page.tsx`](./app/auth/page.tsx)
 - Auth UI: [`components/auth/AuthPanel.tsx`](./components/auth/AuthPanel.tsx)
-- Middleware protection: [`middleware.ts`](./middleware.ts)
+- Route protection proxy: [`proxy.ts`](./proxy.ts)
 - Server-side admin guard: [`lib/auth/require-admin.ts`](./lib/auth/require-admin.ts)
 
 Rules implemented:

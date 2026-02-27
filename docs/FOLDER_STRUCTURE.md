@@ -46,9 +46,9 @@
 │   └── schema.sql
 ├── .gitignore
 ├── eslint.config.mjs
-├── middleware.ts
 ├── next.config.ts
 ├── package.json
+├── proxy.ts
 ├── postcss.config.mjs
 └── tsconfig.json
 ```
