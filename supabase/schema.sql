@@ -1,0 +1,427 @@
+-- LoyaltySphere MVP schema
+-- Tables: profiles, businesses, products, loyalty_cards
+
+create extension if not exists "pgcrypto";
+
+create table if not exists public.profiles (
+  id uuid primary key references auth.users (id) on delete cascade,
+  full_name text,
+  role text not null default 'customer' check (role in ('business', 'customer')),
+  avatar_url text,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+create table if not exists public.businesses (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null references public.profiles (id) on delete cascade,
+  slug text not null unique,
+  name text not null,
+  description text,
+  logo_url text,
+  theme_config jsonb not null default '{"accent":"#6366f1","glow":"#8b5cf6","surface":"#0b1220"}'::jsonb,
+  city text,
+  country text,
+  is_active boolean not null default true,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+create table if not exists public.products (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references public.businesses (id) on delete cascade,
+  name text not null,
+  description text,
+  price numeric(10, 2) not null check (price >= 0),
+  image_url text,
+  is_active boolean not null default true,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+create table if not exists public.loyalty_cards (
+  id uuid primary key default gen_random_uuid(),
+  customer_id uuid not null references public.profiles (id) on delete cascade,
+  business_id uuid not null references public.businesses (id) on delete cascade,
+  stamps_earned integer not null default 0 check (stamps_earned >= 0),
+  qr_token uuid not null default gen_random_uuid() unique,
+  last_scanned_at timestamptz,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now()),
+  unique (customer_id, business_id)
+);
+
+alter table public.businesses
+add column if not exists theme_config jsonb not null default '{"accent":"#6366f1","glow":"#8b5cf6","surface":"#0b1220"}'::jsonb;
+
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'loyalty_cards'
+      and column_name = 'points'
+  ) and not exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'loyalty_cards'
+      and column_name = 'stamps_earned'
+  ) then
+    alter table public.loyalty_cards rename column points to stamps_earned;
+  end if;
+end;
+$$;
+
+alter table public.loyalty_cards
+add column if not exists stamps_earned integer not null default 0;
+
+alter table public.profiles drop constraint if exists profiles_role_check;
+
+update public.profiles
+set role = 'business'
+where role = 'admin';
+
+alter table public.profiles add constraint profiles_role_check check (role in ('business', 'customer'));
+
+create index if not exists idx_businesses_owner_id on public.businesses (owner_id);
+create index if not exists idx_products_business_id on public.products (business_id);
+create index if not exists idx_loyalty_cards_business_id on public.loyalty_cards (business_id);
+create index if not exists idx_loyalty_cards_customer_id on public.loyalty_cards (customer_id);
+
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = timezone('utc', now());
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_profiles_updated_at on public.profiles;
+create trigger trg_profiles_updated_at
+before update on public.profiles
+for each row
+execute function public.set_updated_at();
+
+drop trigger if exists trg_businesses_updated_at on public.businesses;
+create trigger trg_businesses_updated_at
+before update on public.businesses
+for each row
+execute function public.set_updated_at();
+
+drop trigger if exists trg_products_updated_at on public.products;
+create trigger trg_products_updated_at
+before update on public.products
+for each row
+execute function public.set_updated_at();
+
+drop trigger if exists trg_loyalty_cards_updated_at on public.loyalty_cards;
+create trigger trg_loyalty_cards_updated_at
+before update on public.loyalty_cards
+for each row
+execute function public.set_updated_at();
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, full_name, role)
+  values (
+    new.id,
+    new.raw_user_meta_data ->> 'full_name',
+    case
+      when new.raw_user_meta_data ->> 'role' in ('business', 'customer') then (new.raw_user_meta_data ->> 'role')::text
+      else 'customer'
+    end
+  )
+  on conflict (id) do update
+  set
+    full_name = excluded.full_name,
+    role = excluded.role;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+after insert on auth.users
+for each row
+execute function public.handle_new_user();
+
+alter table public.profiles enable row level security;
+alter table public.businesses enable row level security;
+alter table public.products enable row level security;
+alter table public.loyalty_cards enable row level security;
+
+-- Profiles: users manage only their own account row.
+drop policy if exists "profiles_select_own" on public.profiles;
+create policy "profiles_select_own"
+on public.profiles
+for select
+using (auth.uid() = id);
+
+drop policy if exists "profiles_insert_own" on public.profiles;
+create policy "profiles_insert_own"
+on public.profiles
+for insert
+with check (auth.uid() = id);
+
+drop policy if exists "profiles_update_own" on public.profiles;
+create policy "profiles_update_own"
+on public.profiles
+for update
+using (auth.uid() = id)
+with check (auth.uid() = id);
+
+-- Businesses: users can only see/edit their own rows.
+drop policy if exists "businesses_select_active_or_owned" on public.businesses;
+drop policy if exists "businesses_select_owned" on public.businesses;
+create policy "businesses_select_owned"
+on public.businesses
+for select
+using (owner_id = auth.uid());
+
+drop policy if exists "businesses_insert_owned" on public.businesses;
+create policy "businesses_insert_owned"
+on public.businesses
+for insert
+with check (owner_id = auth.uid());
+
+drop policy if exists "businesses_update_owned" on public.businesses;
+create policy "businesses_update_owned"
+on public.businesses
+for update
+using (owner_id = auth.uid())
+with check (owner_id = auth.uid());
+
+drop policy if exists "businesses_delete_owned" on public.businesses;
+create policy "businesses_delete_owned"
+on public.businesses
+for delete
+using (owner_id = auth.uid());
+
+-- Products: only business owners can see or mutate products tied to their businesses.
+drop policy if exists "products_select_active_or_owned" on public.products;
+drop policy if exists "products_select_owned_business" on public.products;
+create policy "products_select_owned_business"
+on public.products
+for select
+using (
+  exists (
+    select 1
+    from public.businesses b
+    where b.id = business_id
+      and b.owner_id = auth.uid()
+  )
+);
+
+drop policy if exists "products_insert_owned_business" on public.products;
+create policy "products_insert_owned_business"
+on public.products
+for insert
+with check (
+  exists (
+    select 1
+    from public.businesses b
+    where b.id = business_id
+      and b.owner_id = auth.uid()
+  )
+);
+
+drop policy if exists "products_update_owned_business" on public.products;
+create policy "products_update_owned_business"
+on public.products
+for update
+using (
+  exists (
+    select 1
+    from public.businesses b
+    where b.id = business_id
+      and b.owner_id = auth.uid()
+  )
+)
+with check (
+  exists (
+    select 1
+    from public.businesses b
+    where b.id = business_id
+      and b.owner_id = auth.uid()
+  )
+);
+
+drop policy if exists "products_delete_owned_business" on public.products;
+create policy "products_delete_owned_business"
+on public.products
+for delete
+using (
+  exists (
+    select 1
+    from public.businesses b
+    where b.id = business_id
+      and b.owner_id = auth.uid()
+  )
+);
+
+-- Loyalty cards: customers can read their own cards;
+-- only issuing business owner can update stamps.
+drop policy if exists "loyalty_cards_select_customer_or_owner" on public.loyalty_cards;
+drop policy if exists "loyalty_cards_select_customer_own" on public.loyalty_cards;
+create policy "loyalty_cards_select_customer_own"
+on public.loyalty_cards
+for select
+using (customer_id = auth.uid());
+
+drop policy if exists "loyalty_cards_insert_customer_or_owner" on public.loyalty_cards;
+create policy "loyalty_cards_insert_customer_or_owner"
+on public.loyalty_cards
+for insert
+with check (
+  customer_id = auth.uid()
+  or exists (
+    select 1
+    from public.businesses b
+    where b.id = business_id
+      and b.owner_id = auth.uid()
+  )
+);
+
+drop policy if exists "loyalty_cards_update_owner_only" on public.loyalty_cards;
+create policy "loyalty_cards_update_owner_only"
+on public.loyalty_cards
+for update
+using (
+  exists (
+    select 1
+    from public.businesses b
+    where b.id = business_id
+      and b.owner_id = auth.uid()
+  )
+)
+with check (
+  exists (
+    select 1
+    from public.businesses b
+    where b.id = business_id
+      and b.owner_id = auth.uid()
+  )
+);
+
+drop function if exists public.increment_loyalty_points(uuid, uuid, integer);
+
+create or replace function public.increment_loyalty_stamps(
+  p_business_id uuid,
+  p_qr_token uuid,
+  p_stamps_to_add integer default 1
+)
+returns public.loyalty_cards
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_card public.loyalty_cards;
+begin
+  if p_stamps_to_add < 1 then
+    raise exception 'Stamps to add must be at least 1';
+  end if;
+
+  if not exists (
+    select 1
+    from public.businesses b
+    where b.id = p_business_id
+      and b.owner_id = auth.uid()
+  ) then
+    raise exception 'Not authorized to update cards for this business';
+  end if;
+
+  update public.loyalty_cards
+  set
+    stamps_earned = stamps_earned + p_stamps_to_add,
+    last_scanned_at = timezone('utc', now()),
+    updated_at = timezone('utc', now())
+  where business_id = p_business_id
+    and qr_token = p_qr_token
+  returning * into v_card;
+
+  if v_card.id is null then
+    raise exception 'Loyalty card not found';
+  end if;
+
+  return v_card;
+end;
+$$;
+
+grant execute on function public.increment_loyalty_stamps(uuid, uuid, integer) to authenticated;
+
+insert into storage.buckets (id, name, public)
+values ('product-images', 'product-images', true)
+on conflict (id) do nothing;
+
+alter table storage.objects enable row level security;
+
+drop policy if exists "product_images_public_read" on storage.objects;
+create policy "product_images_public_read"
+on storage.objects
+for select
+using (bucket_id = 'product-images');
+
+drop policy if exists "product_images_owner_insert" on storage.objects;
+create policy "product_images_owner_insert"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'product-images'
+  and exists (
+    select 1
+    from public.businesses b
+    where b.owner_id = auth.uid()
+      and b.id::text = (storage.foldername(name))[1]
+  )
+);
+
+drop policy if exists "product_images_owner_update" on storage.objects;
+create policy "product_images_owner_update"
+on storage.objects
+for update
+to authenticated
+using (
+  bucket_id = 'product-images'
+  and exists (
+    select 1
+    from public.businesses b
+    where b.owner_id = auth.uid()
+      and b.id::text = (storage.foldername(name))[1]
+  )
+)
+with check (
+  bucket_id = 'product-images'
+  and exists (
+    select 1
+    from public.businesses b
+    where b.owner_id = auth.uid()
+      and b.id::text = (storage.foldername(name))[1]
+  )
+);
+
+drop policy if exists "product_images_owner_delete" on storage.objects;
+create policy "product_images_owner_delete"
+on storage.objects
+for delete
+to authenticated
+using (
+  bucket_id = 'product-images'
+  and exists (
+    select 1
+    from public.businesses b
+    where b.owner_id = auth.uid()
+      and b.id::text = (storage.foldername(name))[1]
+  )
+);
