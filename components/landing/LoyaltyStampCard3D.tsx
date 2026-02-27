@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -31,21 +31,20 @@ function easeOutCubic(value: number) {
 
 function StampScene({ stamps, pendingSlot, animationId, onCoinSettled }: StampSceneProps) {
   const coinRef = useRef<Mesh | null>(null);
-  const [activeSlot, setActiveSlot] = useState<number | null>(null);
+  const activeSlotRef = useRef<number | null>(null);
+  const lastAnimationIdRef = useRef(-1);
   const progressRef = useRef(0);
   const hasSettledRef = useRef(false);
 
-  useEffect(() => {
-    if (pendingSlot === null) {
-      return;
+  useFrame((_, delta) => {
+    if (animationId !== lastAnimationIdRef.current && pendingSlot !== null) {
+      lastAnimationIdRef.current = animationId;
+      activeSlotRef.current = pendingSlot;
+      progressRef.current = 0;
+      hasSettledRef.current = false;
     }
 
-    setActiveSlot(pendingSlot);
-    progressRef.current = 0;
-    hasSettledRef.current = false;
-  }, [pendingSlot, animationId]);
-
-  useFrame((_, delta) => {
+    const activeSlot = activeSlotRef.current;
     const coin = coinRef.current;
     if (!coin || activeSlot === null) {
       return;
@@ -69,7 +68,7 @@ function StampScene({ stamps, pendingSlot, animationId, onCoinSettled }: StampSc
     if (progressRef.current >= 1 && !hasSettledRef.current) {
       hasSettledRef.current = true;
       onCoinSettled(activeSlot);
-      setActiveSlot(null);
+      activeSlotRef.current = null;
     }
   });
 
@@ -112,7 +111,7 @@ function StampScene({ stamps, pendingSlot, animationId, onCoinSettled }: StampSc
         </mesh>
       </group>
 
-      {activeSlot !== null && (
+      {pendingSlot !== null && (
         <mesh ref={coinRef} castShadow>
           <cylinderGeometry args={[0.22, 0.22, 0.08, 40]} />
           <meshStandardMaterial color="#fbbf24" metalness={0.96} roughness={0.2} />
