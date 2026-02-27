@@ -1,38 +1,26 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, Lock, QrCode, Rocket, Sparkles, Store } from "lucide-react";
+import { QrCode, Rocket, Sparkles, Store } from "lucide-react";
 
 const bentoItems = [
   {
-    title: "Business storefront profiles",
-    description: "Launch a premium profile page with your products, story, and operating hours.",
+    title: "Product Showcase",
+    description: "Digital storefront directories for independent shops and growing local brands.",
     icon: Store,
-    className: "md:col-span-2"
-  },
-  {
-    title: "QR-first stamp flow",
-    description: "Scan customer cards in seconds and update loyalty points instantly.",
-    icon: QrCode,
     className: "md:col-span-1"
   },
   {
-    title: "RLS-powered privacy",
-    description: "Each business sees only its own data. Customer cards remain isolated by default.",
-    icon: Lock,
-    className: "md:col-span-1"
-  },
-  {
-    title: "Motion-rich UX",
-    description: "Linear-inspired interactions with smooth transitions and tactile feedback.",
+    title: "3D Loyalty Cards",
+    description: "Interactive cards that tilt, glow, and celebrate each verified stamp.",
     icon: Sparkles,
     className: "md:col-span-1"
   },
   {
-    title: "Realtime-ready architecture",
-    description: "Built on Next.js + Supabase with room to scale into notifications and analytics.",
-    icon: Cpu,
-    className: "md:col-span-2"
+    title: "Merchant Scanner",
+    description: "Use the camera to validate customer QR codes and register stamps instantly.",
+    icon: QrCode,
+    className: "md:col-span-1"
   }
 ];
 
@@ -50,7 +38,7 @@ export function BentoGrid() {
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-indigo-200/80">Bento Overview</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-              A modern loyalty stack for independent businesses
+              LoyaltySphere powers modern, motion-first loyalty experiences
             </h2>
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200/25 bg-indigo-300/10 px-4 py-2 text-xs font-medium text-indigo-100">

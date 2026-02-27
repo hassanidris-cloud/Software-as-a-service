@@ -16,8 +16,16 @@ export function CreateBusinessForm({ ownerId }: CreateBusinessFormProps) {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [themePreset, setThemePreset] = useState<"indigo" | "violet" | "cyan">("indigo");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  const themeMap = {
+    indigo: { accent: "#6366f1", glow: "#8b5cf6", surface: "#0b1220" },
+    violet: { accent: "#8b5cf6", glow: "#c084fc", surface: "#120f25" },
+    cyan: { accent: "#06b6d4", glow: "#22d3ee", surface: "#0a1720" }
+  } as const;
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +43,12 @@ export function CreateBusinessForm({ ownerId }: CreateBusinessFormProps) {
       owner_id: ownerId,
       name: name.trim(),
       slug: resolvedSlug,
-      description: description.trim() || null
+      description: description.trim() || null,
+      logo_url: logoUrl.trim() || null,
+      theme_config: {
+        preset: themePreset,
+        ...themeMap[themePreset]
+      }
     });
 
     if (error) {
@@ -48,6 +61,8 @@ export function CreateBusinessForm({ ownerId }: CreateBusinessFormProps) {
     setName("");
     setSlug("");
     setDescription("");
+    setLogoUrl("");
+    setThemePreset("indigo");
     setIsLoading(false);
     router.refresh();
   }
@@ -90,6 +105,29 @@ export function CreateBusinessForm({ ownerId }: CreateBusinessFormProps) {
             className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none ring-indigo-400/60 placeholder:text-slate-500 focus:ring-2"
             placeholder="A neighborhood cafe serving artisan coffee and fresh pastries."
           />
+        </label>
+
+        <label className="block space-y-1.5">
+          <span className="text-sm font-medium text-slate-200">Logo URL (optional)</span>
+          <input
+            value={logoUrl}
+            onChange={(event) => setLogoUrl(event.target.value)}
+            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none ring-indigo-400/60 placeholder:text-slate-500 focus:ring-2"
+            placeholder="https://cdn.yourbrand.com/logo.png"
+          />
+        </label>
+
+        <label className="block space-y-1.5">
+          <span className="text-sm font-medium text-slate-200">3D theme preset</span>
+          <select
+            value={themePreset}
+            onChange={(event) => setThemePreset(event.target.value as "indigo" | "violet" | "cyan")}
+            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none ring-indigo-400/60 focus:ring-2"
+          >
+            <option value="indigo">Indigo Neon</option>
+            <option value="violet">Violet Glow</option>
+            <option value="cyan">Cyan Pulse</option>
+          </select>
         </label>
 
         <button

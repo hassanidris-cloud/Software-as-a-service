@@ -1,5 +1,5 @@
 import { CreateBusinessForm } from "@/components/dashboard/CreateBusinessForm";
-import { getPrimaryBusiness, requireAdminContext } from "@/lib/auth/require-admin";
+import { getPrimaryBusiness, requireBusinessContext } from "@/lib/auth/require-business";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 function monthStartIso() {
@@ -10,7 +10,7 @@ function monthStartIso() {
 }
 
 export default async function DashboardOverviewPage() {
-  const { user } = await requireAdminContext();
+  const { user } = await requireBusinessContext();
   const business = await getPrimaryBusiness(user.id);
 
   if (!business) {

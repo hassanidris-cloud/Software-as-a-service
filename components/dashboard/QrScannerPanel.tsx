@@ -17,26 +17,26 @@ export function QrScannerPanel({ businessId }: QrScannerPanelProps) {
   const supabase = useMemo(() => createBrowserSupabaseClient(), []);
   const scannerRef = useRef<import("html5-qrcode").Html5Qrcode | null>(null);
   const processingRef = useRef(false);
-  const scannerElementId = "loyaltyhub-qr-reader";
+  const scannerElementId = "loyaltysphere-qr-reader";
   const [isStarting, setIsStarting] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [status, setStatus] = useState("Scanner idle.");
 
-  async function applyPoint(decodedText: string) {
+  async function applyStamp(decodedText: string) {
     const token = decodedText.trim();
     if (!isUuid(token)) {
       setStatus("Invalid QR payload. Expected a UUID loyalty token.");
       return;
     }
 
-    const { data, error } = await supabase.rpc("increment_loyalty_points", {
+    const { data, error } = await supabase.rpc("increment_loyalty_stamps", {
       p_business_id: businessId,
       p_qr_token: token,
-      p_points_to_add: 1
+      p_stamps_to_add: 1
     });
 
     if (error) {
-      setStatus(`Failed to update points: ${error.message}`);
+      setStatus(`Failed to update stamps: ${error.message}`);
       return;
     }
 
@@ -47,7 +47,7 @@ export function QrScannerPanel({ businessId }: QrScannerPanelProps) {
       return;
     }
 
-    setStatus(`Scan successful. Customer now has ${card.points} points.`);
+    setStatus(`Scan successful. Customer now has ${card.stamps_earned} stamps.`);
   }
 
   async function stopScanner() {
@@ -93,7 +93,7 @@ export function QrScannerPanel({ businessId }: QrScannerPanelProps) {
           }
 
           processingRef.current = true;
-          void applyPoint(decodedText).finally(() => {
+          void applyStamp(decodedText).finally(() => {
             window.setTimeout(() => {
               processingRef.current = false;
             }, 1200);
@@ -138,7 +138,7 @@ export function QrScannerPanel({ businessId }: QrScannerPanelProps) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-medium text-white">QR Scanner</h3>
-          <p className="text-sm text-slate-400">Scan customer loyalty cards and add 1 point per scan.</p>
+          <p className="text-sm text-slate-400">Scan customer loyalty cards and add 1 stamp per scan.</p>
         </div>
         {isScanning ? (
           <button

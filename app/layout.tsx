@@ -8,9 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "LoyaltyHub | Digital Loyalty For Modern Businesses",
+  title: "LoyaltySphere | Premium 3D Loyalty SaaS",
   description:
-    "Launch a branded profile, showcase products, and reward returning customers with a QR-based loyalty system."
+    "Premium B2B SaaS for digital product directories, 3D loyalty cards, and merchant QR stamp validation."
 };
 
 export default function RootLayout({

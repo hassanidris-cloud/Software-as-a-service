@@ -3,12 +3,12 @@ import type { User } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { BusinessRow, ProfileRow } from "@/lib/supabase/types";
 
-export type AdminContext = {
+export type BusinessContext = {
   user: User;
   profile: Pick<ProfileRow, "id" | "full_name" | "role">;
 };
 
-export async function requireAdminContext(): Promise<AdminContext> {
+export async function requireBusinessContext(): Promise<BusinessContext> {
   const supabase = await createServerSupabaseClient();
   const {
     data: { user }
@@ -32,8 +32,8 @@ export async function requireAdminContext(): Promise<AdminContext> {
     redirect("/auth?error=profile_missing");
   }
 
-  if (profile.role !== "admin") {
-    redirect("/auth?error=admin_only");
+  if (profile.role !== "business") {
+    redirect("/auth?error=business_only");
   }
 
   return {

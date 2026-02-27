@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BadgeCheck, ChartNoAxesColumn, ShieldCheck } from "lucide-react";
-import { LoyaltyStampCard3D } from "@/components/landing/LoyaltyStampCard3D";
+import { CustomerLoyaltyCard3D } from "@/components/landing/CustomerLoyaltyCard3D";
 
 export function Hero() {
   return (
@@ -27,11 +27,11 @@ export function Hero() {
             className="space-y-5"
           >
             <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Loyalty infrastructure with a <span className="text-indigo-300">Linear + Apple</span> feel.
+              Build premium customer retention with <span className="text-indigo-300">LoyaltySphere</span>.
             </h1>
             <p className="max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
-              LoyaltyHub helps businesses ship beautiful storefront profiles, QR loyalty workflows, and secure
-              customer retention tools without engineering overhead.
+              A SaaS 2.0 platform for product directories, 3D digital loyalty cards, and merchant-grade stamp
+              validation in one polished dashboard.
             </p>
           </motion.div>
 
@@ -45,7 +45,7 @@ export function Hero() {
               href="/dashboard"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-indigo-400"
             >
-              Open Dashboard
+              Launch Business Dashboard
               <ArrowRight size={16} />
             </Link>
             <Link
@@ -65,17 +65,17 @@ export function Hero() {
             <article className="glass-panel rounded-2xl p-4">
               <ShieldCheck className="mb-2 text-indigo-200" size={18} />
               <h3 className="text-sm font-medium text-white">Security by default</h3>
-              <p className="mt-1 text-sm text-slate-300">RLS policies isolate every business and customer row.</p>
+              <p className="mt-1 text-sm text-slate-300">RLS isolates business data and customer loyalty records.</p>
             </article>
             <article className="glass-panel rounded-2xl p-4">
               <ChartNoAxesColumn className="mb-2 text-indigo-200" size={18} />
-              <h3 className="text-sm font-medium text-white">Retention focused</h3>
-              <p className="mt-1 text-sm text-slate-300">Turn purchases into repeat behavior with digital stamps.</p>
+              <h3 className="text-sm font-medium text-white">Depth-driven design</h3>
+              <p className="mt-1 text-sm text-slate-300">Linear-style interfaces with motion-rich, premium polish.</p>
             </article>
           </motion.div>
         </div>
 
-        <LoyaltyStampCard3D />
+        <CustomerLoyaltyCard3D />
       </div>
     </section>
   );

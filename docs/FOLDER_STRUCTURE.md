@@ -1,4 +1,4 @@
-# LoyaltyHub - Recommended Next.js Folder Structure
+# LoyaltySphere - Recommended Next.js Folder Structure
 
 ```text
 .
@@ -20,17 +20,19 @@
 │   │   ├── AuthPanel.tsx
 │   │   └── SignOutButton.tsx
 │   ├── dashboard/
-│   │   ├── AddProductForm.tsx
 │   │   ├── CreateBusinessForm.tsx
+│   │   ├── ProductManager.tsx
 │   │   ├── QrScannerPanel.tsx
 │   │   └── Sidebar.tsx
 │   └── landing/
+│       ├── BentoGrid.tsx
+│       ├── CustomerLoyaltyCard3D.tsx
 │       └── Hero.tsx
 ├── docs/
 │   └── FOLDER_STRUCTURE.md
 ├── lib/
 │   ├── auth/
-│   │   └── require-admin.ts
+│   │   └── require-business.ts
 │   ├── supabase/
 │   │   ├── browser.ts
 │   │   ├── client.ts

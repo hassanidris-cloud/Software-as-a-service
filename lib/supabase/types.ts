@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "customer";
+export type UserRole = "business" | "customer";
 
 export type ProfileRow = {
   id: string;
@@ -16,6 +16,7 @@ export type BusinessRow = {
   name: string;
   description: string | null;
   logo_url: string | null;
+  theme_config: Record<string, unknown>;
   city: string | null;
   country: string | null;
   is_active: boolean;
@@ -39,7 +40,7 @@ export type LoyaltyCardRow = {
   id: string;
   customer_id: string;
   business_id: string;
-  points: number;
+  stamps_earned: number;
   qr_token: string;
   last_scanned_at: string | null;
   created_at: string;
@@ -75,6 +76,7 @@ export type Database = {
           name: string;
           description?: string | null;
           logo_url?: string | null;
+          theme_config?: Record<string, unknown>;
           city?: string | null;
           country?: string | null;
           is_active?: boolean;
@@ -86,6 +88,7 @@ export type Database = {
           name?: string;
           description?: string | null;
           logo_url?: string | null;
+          theme_config?: Record<string, unknown>;
           city?: string | null;
           country?: string | null;
           is_active?: boolean;
@@ -120,14 +123,14 @@ export type Database = {
           id?: string;
           customer_id: string;
           business_id: string;
-          points?: number;
+          stamps_earned?: number;
           qr_token?: string;
           last_scanned_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
-          points?: number;
+          stamps_earned?: number;
           last_scanned_at?: string | null;
           updated_at?: string;
         };
@@ -135,11 +138,11 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
-      increment_loyalty_points: {
+      increment_loyalty_stamps: {
         Args: {
           p_business_id: string;
           p_qr_token: string;
-          p_points_to_add?: number;
+          p_stamps_to_add?: number;
         };
         Returns: LoyaltyCardRow;
       };

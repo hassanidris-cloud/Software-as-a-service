@@ -10,7 +10,7 @@ type AuthPageProps = {
 };
 
 const errorMessages: Record<string, string> = {
-  admin_only: "This dashboard is only available for admin (shop owner) accounts.",
+  business_only: "This dashboard is only available for business (shop owner) accounts.",
   profile_missing: "We could not find your profile. Please sign in again."
 };
 
@@ -25,14 +25,14 @@ export default async function AuthPage({ searchParams }: AuthPageProps) {
         <section className="space-y-5">
           <span className="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-sm text-indigo-200">
             <ShieldCheck size={16} />
-            LoyaltyHub Access
+            LoyaltySphere Access
           </span>
           <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            Sign in to manage your digital loyalty program
+            Sign in to manage your premium loyalty operations
           </h1>
           <p className="max-w-lg text-slate-300">
-            Admin accounts can manage products and scan customer QR cards. Customer accounts can hold and
-            collect loyalty points.
+            Business accounts can manage products and scan customer QR cards. Customer accounts can hold and
+            collect loyalty stamps.
           </p>
           <Link
             href="/"

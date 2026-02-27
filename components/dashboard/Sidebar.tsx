@@ -13,8 +13,8 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/products", label: "My Products", icon: Package },
-  { href: "/dashboard/scan", label: "Scan QR Code", icon: QrCode }
+  { href: "/dashboard/products", label: "Product Manager", icon: Package },
+  { href: "/dashboard/scan", label: "Stamp Scanner", icon: QrCode }
 ];
 
 function getActiveStyles(active: boolean) {
@@ -34,7 +34,7 @@ export function DashboardSidebar({ fullName, businessName }: DashboardSidebarPro
   return (
     <aside className="border-b border-slate-800 bg-slate-950 md:min-h-screen md:w-72 md:border-r md:border-b-0">
       <div className="border-b border-slate-800 px-5 py-4">
-        <p className="text-sm text-slate-400">LoyaltyHub</p>
+        <p className="text-sm text-slate-400">LoyaltySphere</p>
         <h1 className="text-lg font-semibold text-white">Business Dashboard</h1>
         <p className="mt-2 text-xs text-slate-400">{fullName}</p>
         {businessName && <p className="text-xs text-indigo-200">{businessName}</p>}

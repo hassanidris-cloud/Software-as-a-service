@@ -1,4 +1,4 @@
--- LoyaltyHub MVP schema
+-- LoyaltySphere MVP schema
 -- Tables: profiles, businesses, products, loyalty_cards
 
 create extension if not exists "pgcrypto";
@@ -6,7 +6,7 @@ create extension if not exists "pgcrypto";
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text,
-  role text not null default 'customer' check (role in ('admin', 'customer')),
+  role text not null default 'customer' check (role in ('business', 'customer')),
   avatar_url text,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
@@ -19,6 +19,7 @@ create table if not exists public.businesses (
   name text not null,
   description text,
   logo_url text,
+  theme_config jsonb not null default '{"accent":"#6366f1","glow":"#8b5cf6","surface":"#0b1220"}'::jsonb,
   city text,
   country text,
   is_active boolean not null default true,
@@ -42,7 +43,7 @@ create table if not exists public.loyalty_cards (
   id uuid primary key default gen_random_uuid(),
   customer_id uuid not null references public.profiles (id) on delete cascade,
   business_id uuid not null references public.businesses (id) on delete cascade,
-  points integer not null default 0 check (points >= 0),
+  stamps_earned integer not null default 0 check (stamps_earned >= 0),
   qr_token uuid not null default gen_random_uuid() unique,
   last_scanned_at timestamptz,
   created_at timestamptz not null default timezone('utc', now()),
@@ -101,7 +102,7 @@ begin
     new.id,
     new.raw_user_meta_data ->> 'full_name',
     case
-      when new.raw_user_meta_data ->> 'role' in ('admin', 'customer') then (new.raw_user_meta_data ->> 'role')::text
+      when new.raw_user_meta_data ->> 'role' in ('business', 'customer') then (new.raw_user_meta_data ->> 'role')::text
       else 'customer'
     end
   )
@@ -235,7 +236,7 @@ using (
 );
 
 -- Loyalty cards: customers can read their own cards;
--- only issuing business owner can update stamps/points.
+-- only issuing business owner can update stamps.
 drop policy if exists "loyalty_cards_select_customer_or_owner" on public.loyalty_cards;
 drop policy if exists "loyalty_cards_select_customer_own" on public.loyalty_cards;
 create policy "loyalty_cards_select_customer_own"
@@ -278,10 +279,10 @@ with check (
   )
 );
 
-create or replace function public.increment_loyalty_points(
+create or replace function public.increment_loyalty_stamps(
   p_business_id uuid,
   p_qr_token uuid,
-  p_points_to_add integer default 1
+  p_stamps_to_add integer default 1
 )
 returns public.loyalty_cards
 language plpgsql
@@ -291,8 +292,8 @@ as $$
 declare
   v_card public.loyalty_cards;
 begin
-  if p_points_to_add < 1 then
-    raise exception 'Points to add must be at least 1';
+  if p_stamps_to_add < 1 then
+    raise exception 'Stamps to add must be at least 1';
   end if;
 
   if not exists (
@@ -306,7 +307,7 @@ begin
 
   update public.loyalty_cards
   set
-    points = points + p_points_to_add,
+    stamps_earned = stamps_earned + p_stamps_to_add,
     last_scanned_at = timezone('utc', now()),
     updated_at = timezone('utc', now())
   where business_id = p_business_id
@@ -321,7 +322,7 @@ begin
 end;
 $$;
 
-grant execute on function public.increment_loyalty_points(uuid, uuid, integer) to authenticated;
+grant execute on function public.increment_loyalty_stamps(uuid, uuid, integer) to authenticated;
 
 insert into storage.buckets (id, name, public)
 values ('product-images', 'product-images', true)

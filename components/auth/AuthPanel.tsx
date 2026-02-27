@@ -20,7 +20,7 @@ export function AuthPanel({ errorMessage = "", nextPath }: AuthPanelProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState<UserRole>("admin");
+  const [role, setRole] = useState<UserRole>("business");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,7 +48,7 @@ export function AuthPanel({ errorMessage = "", nextPath }: AuthPanelProps) {
 
     const resolvedRole = (profile as { role?: UserRole } | null)?.role;
 
-    if (resolvedRole === "admin") {
+    if (resolvedRole === "business") {
       router.push(nextPath);
     } else {
       router.push("/");
@@ -143,7 +143,7 @@ export function AuthPanel({ errorMessage = "", nextPath }: AuthPanelProps) {
                 onChange={(event) => setRole(event.target.value as UserRole)}
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none ring-indigo-400/60 focus:ring-2"
               >
-                <option value="admin">Admin (Shop Owner)</option>
+                <option value="business">Business (Shop Owner)</option>
                 <option value="customer">Customer</option>
               </select>
             </label>

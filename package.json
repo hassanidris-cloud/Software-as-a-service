@@ -1,7 +1,7 @@
 {
-  "name": "loyaltyhub-mvp",
+  "name": "loyaltysphere",
   "version": "0.1.0",
-  "description": "LoyaltyHub SaaS MVP built with Next.js and Supabase",
+  "description": "LoyaltySphere premium loyalty SaaS built with Next.js and Supabase",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -26,8 +26,6 @@
   },
   "homepage": "https://github.com/hassanidris-cloud/Software-as-a-service#readme",
   "dependencies": {
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.5.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.98.0",
     "canvas-confetti": "^1.9.4",
@@ -36,8 +34,7 @@
     "lucide-react": "^0.575.0",
     "next": "^16.1.6",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "three": "^0.183.1"
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.1",
