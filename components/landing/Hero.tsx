@@ -1,70 +1,81 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, QrCode, Store } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, BadgeCheck, ChartNoAxesColumn, ShieldCheck } from "lucide-react";
+import { LoyaltyStampCard3D } from "@/components/landing/LoyaltyStampCard3D";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.2),_transparent_60%)]" />
+    <section className="px-4 pb-8 pt-14 sm:px-6 sm:pt-20 lg:px-8">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="space-y-8">
+          <motion.span
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+            className="inline-flex items-center gap-2 rounded-full border border-indigo-200/30 bg-indigo-300/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-indigo-100"
+          >
+            <BadgeCheck size={14} />
+            Built for modern local commerce
+          </motion.span>
 
-      <div className="mx-auto flex min-h-[85vh] w-full max-w-6xl items-center px-4 py-20 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div className="space-y-7">
-            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-400/10 px-4 py-1.5 text-sm font-medium text-indigo-200">
-              <BadgeCheck size={16} />
-              Built for local shops and growing brands
-            </span>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.08, ease: "easeOut" }}
+            className="space-y-5"
+          >
+            <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Loyalty infrastructure with a <span className="text-indigo-300">Linear + Apple</span> feel.
+            </h1>
+            <p className="max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+              LoyaltyHub helps businesses ship beautiful storefront profiles, QR loyalty workflows, and secure
+              customer retention tools without engineering overhead.
+            </p>
+          </motion.div>
 
-            <div className="space-y-4">
-              <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Turn first-time buyers into loyal regulars with{" "}
-                <span className="text-indigo-400">LoyaltyHub</span>.
-              </h1>
-              <p className="max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
-                Create a professional business profile, showcase your best products, and reward repeat
-                customers using a fast QR-powered loyalty card system.
-              </p>
-            </div>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.15, ease: "easeOut" }}
+            className="flex flex-col gap-3 sm:flex-row"
+          >
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-indigo-400"
+            >
+              Open Dashboard
+              <ArrowRight size={16} />
+            </Link>
+            <Link
+              href="#features"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-600/70 bg-slate-900/40 px-5 py-3 text-sm font-medium text-slate-100 transition hover:border-slate-500 hover:bg-slate-900/80"
+            >
+              Explore Bento Features
+            </Link>
+          </motion.div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-indigo-400"
-              >
-                Open Business Dashboard
-                <ArrowRight size={16} />
-              </Link>
-              <Link
-                href="#features"
-                className="inline-flex items-center justify-center rounded-lg border border-slate-700 px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-500 hover:bg-slate-900"
-              >
-                Explore Features
-              </Link>
-            </div>
-          </div>
-
-          <div className="grid gap-4 rounded-2xl border border-slate-800 bg-slate-900/50 p-5 backdrop-blur sm:grid-cols-2">
-            <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
-              <Store className="mb-3 text-indigo-400" size={20} />
-              <p className="mb-1 text-sm font-medium text-slate-100">Business Profile</p>
-              <p className="text-sm text-slate-400">
-                Highlight location, story, opening hours, and your top product categories.
-              </p>
-            </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
-              <QrCode className="mb-3 text-indigo-400" size={20} />
-              <p className="mb-1 text-sm font-medium text-slate-100">QR Loyalty Cards</p>
-              <p className="text-sm text-slate-400">
-                Scan and reward customers in seconds to encourage frequent repeat visits.
-              </p>
-            </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4 sm:col-span-2">
-              <p className="text-sm text-slate-400">
-                <span className="font-medium text-slate-200">MVP-ready foundation:</span> App Router +
-                Tailwind UI components + Supabase data model.
-              </p>
-            </div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+            className="grid gap-3 sm:grid-cols-2"
+          >
+            <article className="glass-panel rounded-2xl p-4">
+              <ShieldCheck className="mb-2 text-indigo-200" size={18} />
+              <h3 className="text-sm font-medium text-white">Security by default</h3>
+              <p className="mt-1 text-sm text-slate-300">RLS policies isolate every business and customer row.</p>
+            </article>
+            <article className="glass-panel rounded-2xl p-4">
+              <ChartNoAxesColumn className="mb-2 text-indigo-200" size={18} />
+              <h3 className="text-sm font-medium text-white">Retention focused</h3>
+              <p className="mt-1 text-sm text-slate-300">Turn purchases into repeat behavior with digital stamps.</p>
+            </article>
+          </motion.div>
         </div>
+
+        <LoyaltyStampCard3D />
       </div>
     </section>
   );
