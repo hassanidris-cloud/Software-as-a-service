@@ -84,6 +84,14 @@ body {
   animation: pulseGlow 4.8s ease-in-out infinite;
 }
 
+.gold-coin {
+  background: radial-gradient(circle at 30% 30%, #fde047, #f59e0b 48%, #b45309 100%);
+  box-shadow:
+    0 5px 0 #78350f,
+    0 10px 20px rgba(0, 0, 0, 0.4);
+  transform: translateZ(20px);
+}
+
 .text-balance {
   text-wrap: balance;
 }

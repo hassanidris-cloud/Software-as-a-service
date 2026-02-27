@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BadgeCheck, ChartNoAxesColumn, ShieldCheck } from "lucide-react";
-import { CustomerLoyaltyCard3D } from "@/components/landing/CustomerLoyaltyCard3D";
+import { Interactive3DCard } from "@/components/landing/Interactive3DCard";
 
 export function Hero() {
   return (
@@ -102,7 +102,7 @@ export function Hero() {
             className="depth-outline absolute inset-x-8 bottom-7 -z-10 h-[76%] rounded-3xl bg-fuchsia-900/20 backdrop-blur-sm"
           />
 
-          <CustomerLoyaltyCard3D />
+          <Interactive3DCard />
         </div>
       </div>
     </section>
