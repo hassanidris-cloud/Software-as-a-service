@@ -1,0 +1,47 @@
+{
+  "name": "loyaltyhub-mvp",
+  "version": "0.1.0",
+  "description": "LoyaltyHub SaaS MVP built with Next.js and Supabase",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hassanidris-cloud/Software-as-a-service.git"
+  },
+  "keywords": [
+    "saas",
+    "nextjs",
+    "supabase",
+    "loyalty"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hassanidris-cloud/Software-as-a-service/issues"
+  },
+  "homepage": "https://github.com/hassanidris-cloud/Software-as-a-service#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
+    "lucide-react": "^0.575.0",
+    "next": "^16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.1",
+    "@types/node": "^25.3.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^9.39.3",
+    "eslint-config-next": "^16.1.6",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3"
+  }
+}
