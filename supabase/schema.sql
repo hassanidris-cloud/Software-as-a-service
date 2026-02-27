@@ -145,12 +145,13 @@ for update
 using (auth.uid() = id)
 with check (auth.uid() = id);
 
--- Businesses: only owners can create/manage; everyone authenticated can see active businesses.
+-- Businesses: users can only see/edit their own rows.
 drop policy if exists "businesses_select_active_or_owned" on public.businesses;
-create policy "businesses_select_active_or_owned"
+drop policy if exists "businesses_select_owned" on public.businesses;
+create policy "businesses_select_owned"
 on public.businesses
 for select
-using (is_active = true or owner_id = auth.uid());
+using (owner_id = auth.uid());
 
 drop policy if exists "businesses_insert_owned" on public.businesses;
 create policy "businesses_insert_owned"
@@ -171,9 +172,10 @@ on public.businesses
 for delete
 using (owner_id = auth.uid());
 
--- Products: visible if business is active; owners can manage their own product catalog.
+-- Products: only business owners can see or mutate products tied to their businesses.
 drop policy if exists "products_select_active_or_owned" on public.products;
-create policy "products_select_active_or_owned"
+drop policy if exists "products_select_owned_business" on public.products;
+create policy "products_select_owned_business"
 on public.products
 for select
 using (
@@ -181,7 +183,7 @@ using (
     select 1
     from public.businesses b
     where b.id = business_id
-      and (b.is_active = true or b.owner_id = auth.uid())
+      and b.owner_id = auth.uid()
   )
 );
 
@@ -232,21 +234,14 @@ using (
   )
 );
 
--- Loyalty cards: card holder and business owner can view;
--- only business owner can increment/update points.
+-- Loyalty cards: customers can read their own cards;
+-- only issuing business owner can update stamps/points.
 drop policy if exists "loyalty_cards_select_customer_or_owner" on public.loyalty_cards;
-create policy "loyalty_cards_select_customer_or_owner"
+drop policy if exists "loyalty_cards_select_customer_own" on public.loyalty_cards;
+create policy "loyalty_cards_select_customer_own"
 on public.loyalty_cards
 for select
-using (
-  customer_id = auth.uid()
-  or exists (
-    select 1
-    from public.businesses b
-    where b.id = business_id
-      and b.owner_id = auth.uid()
-  )
-);
+using (customer_id = auth.uid());
 
 drop policy if exists "loyalty_cards_insert_customer_or_owner" on public.loyalty_cards;
 create policy "loyalty_cards_insert_customer_or_owner"
