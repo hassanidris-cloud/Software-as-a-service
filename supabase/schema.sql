@@ -51,6 +51,40 @@ create table if not exists public.loyalty_cards (
   unique (customer_id, business_id)
 );
 
+alter table public.businesses
+add column if not exists theme_config jsonb not null default '{"accent":"#6366f1","glow":"#8b5cf6","surface":"#0b1220"}'::jsonb;
+
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'loyalty_cards'
+      and column_name = 'points'
+  ) and not exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'loyalty_cards'
+      and column_name = 'stamps_earned'
+  ) then
+    alter table public.loyalty_cards rename column points to stamps_earned;
+  end if;
+end;
+$$;
+
+alter table public.loyalty_cards
+add column if not exists stamps_earned integer not null default 0;
+
+alter table public.profiles drop constraint if exists profiles_role_check;
+
+update public.profiles
+set role = 'business'
+where role = 'admin';
+
+alter table public.profiles add constraint profiles_role_check check (role in ('business', 'customer'));
+
 create index if not exists idx_businesses_owner_id on public.businesses (owner_id);
 create index if not exists idx_products_business_id on public.products (business_id);
 create index if not exists idx_loyalty_cards_business_id on public.loyalty_cards (business_id);
@@ -278,6 +312,8 @@ with check (
       and b.owner_id = auth.uid()
   )
 );
+
+drop function if exists public.increment_loyalty_points(uuid, uuid, integer);
 
 create or replace function public.increment_loyalty_stamps(
   p_business_id uuid,
