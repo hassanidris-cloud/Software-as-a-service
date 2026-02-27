@@ -103,6 +103,12 @@ function tokenStyle(theme: ProductTheme): CSSProperties {
   };
 }
 
+function generateRewardCode(type: ProductType) {
+  const prefix = PRODUCT_THEMES[type].label.slice(0, 3).toUpperCase();
+  const random = Math.random().toString(36).slice(2, 8).toUpperCase();
+  return `LS-${prefix}-${random}`;
+}
+
 export function Interactive3DCard() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -112,6 +118,8 @@ export function Interactive3DCard() {
   const [slots, setSlots] = useState<Array<ProductType | null>>(() => Array.from({ length: SLOT_COUNT }, () => null));
   const [flight, setFlight] = useState<FlightState | null>(null);
   const [clinkSlot, setClinkSlot] = useState<number | null>(null);
+  const [rewardCode, setRewardCode] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState("");
 
   const tiltX = useMotionValue(0);
   const tiltY = useMotionValue(0);
@@ -198,25 +206,25 @@ export function Interactive3DCard() {
 
       const next = [...previous];
       next[targetSlot] = type;
-      const nextFilled = next.filter((slot) => slot !== null).length;
-
-      if (nextFilled === SLOT_COUNT) {
-        confetti({
-          particleCount: 120,
-          spread: 75,
-          startVelocity: 42,
-          origin: { y: 0.56 },
-          colors: ["#22d3ee", "#06b6d4", "#d946ef", "#a3e635"]
-        });
-        vibrate([26, 30, 26, 30, 26]);
-      }
-
       return next;
     });
+
+    if (targetSlot === SLOT_COUNT - 1) {
+      confetti({
+        particleCount: 120,
+        spread: 75,
+        startVelocity: 42,
+        origin: { y: 0.56 },
+        colors: ["#22d3ee", "#06b6d4", "#d946ef", "#a3e635"]
+      });
+      vibrate([26, 30, 26, 30, 26]);
+      setRewardCode(generateRewardCode(type));
+      setStatusMessage("Reward code ready. Claim it to reset the card.");
+    }
   }
 
   function handleStampClick(tokenId: number, event: MouseEvent<HTMLButtonElement>) {
-    if (flight || nextSlot === -1) {
+    if (flight || nextSlot === -1 || rewardCode) {
       return;
     }
 
@@ -245,6 +253,25 @@ export function Interactive3DCard() {
     });
 
     vibrate(14);
+  }
+
+  async function claimCodeAndReset() {
+    if (!rewardCode) {
+      return;
+    }
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(rewardCode);
+      }
+    } catch {
+      // Ignore clipboard errors and continue reset.
+    }
+
+    vibrate([18, 24, 18]);
+    setSlots(Array.from({ length: SLOT_COUNT }, () => null));
+    setRewardCode(null);
+    setStatusMessage("Code claimed. Card reset for the next reward cycle.");
   }
 
   function renderFlightToken() {
@@ -323,7 +350,18 @@ export function Interactive3DCard() {
       </div>
 
       <div className="mb-3 flex min-h-10 flex-wrap items-center gap-2">
-        {availableTokens.length > 0 ? (
+        {rewardCode ? (
+          <div className="flex w-full flex-wrap items-center gap-2 rounded-xl border border-lime-200/35 bg-lime-300/10 px-3 py-2">
+            <p className="text-xs font-semibold tracking-wide text-lime-100">Reward Code: {rewardCode}</p>
+            <button
+              type="button"
+              onClick={() => void claimCodeAndReset()}
+              className="rounded-lg border border-lime-200/40 bg-lime-300/20 px-3 py-1.5 text-xs font-semibold text-lime-50 transition hover:bg-lime-300/30"
+            >
+              I got the code, reset card
+            </button>
+          </div>
+        ) : availableTokens.length > 0 ? (
           availableTokens.map((tokenId, index) => {
             const Icon = activeTheme.icon;
             return (
@@ -384,7 +422,9 @@ export function Interactive3DCard() {
         <div className="relative">
           <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/85">Customer Reward Path</p>
           <p className="mt-2 text-sm font-bold text-white">
-            {remainingToReward > 0
+            {rewardCode
+              ? `Your ${activeTheme.reward} code is ready. Claim it, then start the next cycle.`
+              : remainingToReward > 0
               ? `Buy ${remainingToReward} more ${activeTheme.unit}${
                   remainingToReward > 1 ? "s" : ""
                 } to unlock ${activeTheme.reward}`
@@ -434,6 +474,8 @@ export function Interactive3DCard() {
           </div>
         </div>
       </motion.article>
+
+      {statusMessage && <p className="mt-3 text-xs text-cyan-100/80">{statusMessage}</p>}
 
       <AnimatePresence>{renderFlightToken()}</AnimatePresence>
     </motion.section>
